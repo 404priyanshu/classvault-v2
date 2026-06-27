@@ -2,7 +2,15 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+  --text: #111827;
+  --muted: #6b7280;
+  --light: #9ca3af;
+  --accent: #e10600;
+  --border: #e5e7eb;
+  --section-tint: #fafbfc;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @theme inline {
@@ -10,17 +18,350 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
+  outline-offset: 3px;
+}
+
+.pressable {
+  transition: transform 150ms var(--ease-out);
+}
+
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Entrance motion ---------------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Above-the-fold: animate once on load. */
+.hero-rise {
+  animation: rise-in 600ms var(--ease-out) both;
+}
+
+/* Below-the-fold: hidden until IntersectionObserver adds .is-visible.
+   Motion-reduced users skip the hide step entirely. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal.is-visible {
+    animation: rise-in 600ms var(--ease-out) both;
+  }
+}
+
+/* Hover affordances — gated to real pointers so taps don't trigger them. */
+@media (hover: hover) and (pointer: fine) {
+  .card-lift {
+    transition:
+      transform 200ms var(--ease-out),
+      box-shadow 200ms var(--ease-out);
+  }
+
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.12);
+  }
+
+  .row-hover {
+    transition: background-color 150ms ease;
+  }
+
+  .row-hover:hover {
+    background-color: var(--section-tint);
+  }
+
+  /* Icon motions, triggered when their card is hovered. */
+  .icon-card:hover .icon-lock {
+    animation: lock-jiggle 500ms var(--ease-out);
+  }
+
+  .icon-card:hover .icon-clock {
+    animation: clock-tick 3s linear infinite;
+  }
+
+  .icon-card:hover .icon-bookmark {
+    animation: bookmark-bob 600ms var(--ease-out);
+  }
+}
+
+@keyframes lock-jiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-9deg);
+  }
+  40% {
+    transform: rotate(7deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+  80% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes clock-tick {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bookmark-bob {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== HeroBrandPanel "Confluence" ====================================== */
+/* SVG <text> can't inherit Tailwind classes; style captions here. */
+.cv-cap {
+  fill: #9ca3af;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+.cv-cap-red {
+  fill: #e10600;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* Base states for interactive SVG elements */
+.cv-mark,
+.cv-node,
+.cv-glyph {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: all 400ms var(--ease-out);
+}
+
+.cv-path-base {
+  stroke: #262626; /* neutral-800 */
+  stroke-width: 1;
+  transition: stroke 400ms var(--ease-out), filter 400ms var(--ease-out);
+}
+
+/* Base glowing effect path - hidden by default */
+.cv-path-glow {
+  stroke: #e10600;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px rgba(225, 6, 0, 0.4));
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+
+/* Animated signal packet traveling along the path */
+.cv-path-packet {
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+  /* We use inline styles for stroke-dasharray and stroke-dashoffset via React */
+}
+
+/* --- Interactive States (triggered by React state classes) --- */
+
+/* Hover state on a path group */
+.cv-group:hover .cv-path-glow,
+.cv-group-active .cv-path-glow {
+  opacity: 0.6;
+}
+.cv-group:hover .cv-glyph,
+.cv-group-active .cv-glyph {
+  fill: #fff;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  transform: scale(1.1);
+}
+.cv-group:hover .cv-cap,
+.cv-group-active .cv-cap {
+  fill: #d4d4d8; /* zinc-300 */
+}
+
+/* Active Workspace (Central Node) state */
+.cv-workspace-active .cv-mark {
+  filter: drop-shadow(0 0 12px rgba(225, 6, 0, 0.6));
+  transform: scale(1.05);
+}
+.cv-workspace-active .cv-node {
+  fill: #fff;
+  transform: scale(1.1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Gentle floating for glyphs */
+  @keyframes cv-breath {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+    50%      { transform: translateY(-2px) scale(1.02); opacity: 1; }
+  }
+
+  /* Faster, more energetic pulsing for the central node */
+  @keyframes cv-node-breath {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(225,6,0,0.2)); }
+    50%      { transform: scale(1.15); filter: drop-shadow(0 0 12px rgba(225,6,0,0.6)); }
+  }
+
+  /* Rapid click ripple effect for the central mark */
+  @keyframes cv-mark-ripple {
+    0% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(225,6,0,0.4)); opacity: 1; }
+    50% { transform: scale(1.2); filter: drop-shadow(0 0 20px rgba(225,6,0,0.8)); opacity: 0.9; }
+    100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(225,6,0,0.4)); opacity: 1; }
+  }
+
+  .cv-glyph {
+    animation: cv-breath 8s ease-in-out infinite;
+  }
+  .cv-g1 { animation-delay: 0s; }
+  .cv-g2 { animation-delay: 1.5s; }
+  .cv-g3 { animation-delay: 3s; }
+
+  .cv-node-pulse {
+    animation: cv-node-breath 3s ease-in-out infinite;
+  }
+
+  .cv-mark-click {
+    animation: cv-mark-ripple 400ms var(--ease-out) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-glyph { transform: translateY(0); opacity: 0.9; animation: none; }
+  .cv-node-pulse { transform: scale(1); animation: none; filter: none; }
+  .cv-path-packet { display: none; } /* Hide moving packets entirely */
+}
+
+/* Custom Link Underline Morphing Animation */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -1px;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: bottom right;
+  transition: transform 250ms var(--ease-out);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* FAQ Accordion Slide-Open Transition */
+.faq-panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 300ms var(--ease-out), opacity 250ms var(--ease-out);
+}
+details[open] .faq-panel {
+  max-height: 220px; /* Safe standard height for FAQs */
+  opacity: 1;
+}
+
+/* Feature Grid Icon Jiggles & Bounces */
+.feature-icon {
+  transition: transform 250ms var(--ease-out);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row-hover:hover .icon-file {
+    animation: file-tilt 450ms var(--ease-out) forwards;
+  }
+  .row-hover:hover .icon-building {
+    animation: building-bounce 450ms var(--ease-out) forwards;
+  }
+  .row-hover:hover .icon-video {
+    animation: video-rotate 500ms var(--ease-out) forwards;
+  }
+  .row-hover:hover .icon-route {
+    animation: route-shift 600ms var(--ease-out) forwards;
+  }
+}
+
+@keyframes file-tilt {
+  0%, 100% { transform: rotate(0) scale(1); }
+  30% { transform: rotate(-8deg) scale(1.05); }
+  70% { transform: rotate(4deg) scale(1.02); }
+}
+@keyframes building-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-3px) scale(1.04); }
+  70% { transform: translateY(1px) scale(0.98); }
+}
+@keyframes video-rotate {
+  0%, 100% { transform: rotate(0) scale(1); }
+  35% { transform: rotate(-12deg) scale(1.05); }
+  70% { transform: rotate(6deg) scale(1.02); }
+}
+@keyframes route-shift {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(4px) scale(1.02); }
+  70% { transform: translateX(-1px) scale(0.98); }
 }
