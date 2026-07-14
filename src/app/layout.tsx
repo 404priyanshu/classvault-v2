@@ -1,27 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { Schibsted_Grotesk, Young_Serif } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const schibsted = Schibsted_Grotesk({
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const youngSerif = Young_Serif({
+  variable: "--font-display-serif",
   subsets: ["latin"],
-});
-
-const poppins = Poppins({
-  variable: "--font-display-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "ClassVault | Study platform for Indian college students",
+  title: "ClassVault | Notes your classmates already trust",
   description:
-    "Trusted notes, university-specific communities, live study rooms, and personalized study roadmaps for Indian college students.",
+    "A study platform for Indian college students: rated notes, verified university communities, live study rooms, and study roadmaps built from material worth your time.",
 };
 
 export default function RootLayout({
@@ -32,7 +27,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+      className={`${schibsted.variable} ${youngSerif.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
