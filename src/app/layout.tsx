@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk, Young_Serif } from "next/font/google";
+import { Geist, Mukta, Rozha_One } from "next/font/google";
 import "./globals.css";
 
-const schibsted = Schibsted_Grotesk({
+const mukta = Mukta({
   variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const youngSerif = Young_Serif({
+const rozhaOne = Rozha_One({
   variable: "--font-display-serif",
-  subsets: ["latin"],
+  subsets: ["latin", "devanagari"],
   weight: "400",
 });
 
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "ClassVault | Notes your classmates already trust",
+  title: "ClassVault | Notes worth trusting",
   description:
-    "A study platform for Indian college students: rated notes, verified university communities, live study rooms, and study roadmaps built from material worth your time.",
+    "Join the ClassVault waitlist for rated notes, verified university communities, live study rooms, and source-linked study roadmaps.",
 };
 
 export default function RootLayout({
@@ -28,7 +34,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${schibsted.variable} ${youngSerif.variable} h-full antialiased`}
+      className={`${mukta.variable} ${rozhaOne.variable} ${geist.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

@@ -1,42 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  /* The Register palette */
-  --green-deep: #0c2b21; /* oklch(~28% 0.05 165) — hero, CTA, night sections */
-  --green: #143f30; /* raised surfaces on deep green */
-  --green-soft: #1d5340; /* borders / hover on green */
-  --green-ledger: #2f6b53; /* rules and lines on green */
+  /* The Fair Copy palette — two inks on paper */
+  --paper: oklch(1 0 0); /* pure white; warmth lives in the inks, not the surface */
+  --paper-soft: oklch(0.972 0.005 27); /* faint rose-gray alt section */
+  --field-line: oklch(0.93 0.005 27); /* hairline rules */
 
-  --white: #ffffff;
-  --off-white: #f7f7f5; /* true-neutral reading field */
-  --field-line: #e4e5e1; /* ledger rules on light */
+  --ink: oklch(0.25 0.015 27); /* headings, #281f1e */
+  --ink-body: oklch(0.345 0.018 27); /* body prose, 11.6:1 on paper */
+  --ink-muted: oklch(0.455 0.018 27); /* supporting text, 7.4:1 on paper */
 
-  --ink: #161a17; /* headings, near-black with green cast */
-  --ink-body: #363c38; /* body prose */
-  --ink-muted: #566058; /* supporting text, ≥5:1 on off-white */
+  --crimson: oklch(0.53 0.2 27); /* the teacher's red ink — trust marks, primary actions */
+  --crimson-deep: oklch(0.43 0.155 27); /* small red text on paper, drench fields, 8.8:1 on paper */
+  --crimson-raised: oklch(0.485 0.175 27); /* raised surfaces on crimson drench */
+  --crimson-edge: oklch(0.575 0.13 27); /* borders on crimson drench */
+  --crimson-wash: oklch(0.955 0.02 27); /* featured rows */
+  --rose-bright: oklch(0.8 0.1 25); /* marks and chips on crimson drench */
 
-  --ivory: #f4f1e4; /* text on green */
-  --ivory-muted: rgba(244, 241, 228, 0.72);
-  --ivory-faint: rgba(244, 241, 228, 0.6);
+  --ballpoint: oklch(0.38 0.115 263); /* the student's blue ink — links, downloads, 10.2:1 on paper */
+  --ballpoint-deep: oklch(0.32 0.1 263); /* hover */
+  --blue-wash: oklch(0.95 0.02 263); /* hover fills behind ballpoint */
 
-  --marigold: #f5a623; /* the single accent: stamps, stars, highlights */
-  --marigold-deep: #9a6207; /* accent on light backgrounds needing contrast (≥4.5:1 on off-white) */
-  --marigold-wash: #fdf0d7; /* soft callout fill */
+  --blush: oklch(0.93 0.015 27); /* muted text on crimson drench, 7.1:1 on crimson-deep */
 
-  --border: rgba(22, 26, 23, 0.12);
-  --border-strong: rgba(22, 26, 23, 0.28);
+  --border: oklch(0.25 0.015 27 / 0.14);
+  --border-strong: oklch(0.25 0.015 27 / 0.3);
 
-  /* Compat aliases (coming-soon page + legacy classes) */
-  --background: var(--off-white);
+  /* Compat aliases (onboarding flow + legacy classes) */
+  --green-deep: var(--crimson-deep);
+  --green: var(--crimson-raised);
+  --green-soft: var(--crimson-edge);
+  --green-ledger: var(--crimson);
+  --white: var(--paper);
+  --off-white: var(--paper);
+  --ivory: var(--paper);
+  --ivory-muted: rgb(255 255 255 / 0.78);
+  --ivory-faint: rgb(255 255 255 / 0.62);
+  --marigold: var(--rose-bright);
+  --marigold-deep: var(--crimson-deep);
+  --marigold-wash: var(--crimson-wash);
+  --background: var(--paper);
   --foreground: var(--ink);
   --text: var(--ink);
   --muted: var(--ink-muted);
-  --light: #7a827c;
-  --accent: var(--green-deep);
-  --accent-strong: var(--green);
-  --section-tint: #eeefeb;
-  --marigold-soft: var(--marigold-wash);
-  --paper: var(--off-white);
+  --light: oklch(0.55 0.018 27);
+  --accent: var(--crimson);
+  --accent-strong: var(--crimson-deep);
+  --section-tint: var(--paper-soft);
+  --marigold-soft: var(--crimson-wash);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -63,7 +74,7 @@ html {
 body {
   min-width: 320px;
   overflow-x: hidden;
-  background: var(--off-white);
+  background: var(--paper);
   color: var(--ink-body);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
   text-rendering: optimizeLegibility;
@@ -80,8 +91,8 @@ section[id] {
 }
 
 ::selection {
-  background: var(--marigold);
-  color: var(--ink);
+  background: var(--crimson);
+  color: #fff;
 }
 
 .page-shell {
@@ -126,13 +137,17 @@ h3 {
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid var(--marigold);
+  outline: 2px solid var(--crimson);
   outline-offset: 3px;
 }
 
-.on-light .focus-ring:focus-visible,
+.on-crimson .focus-ring:focus-visible,
+.on-green .focus-ring:focus-visible {
+  outline-color: #fff;
+}
+
 .focus-ring.focus-dark:focus-visible {
-  outline-color: var(--green-deep);
+  outline-color: var(--crimson-deep);
 }
 
 .pressable {
@@ -175,49 +190,57 @@ h3 {
   letter-spacing: 0.01em;
 }
 
+/* The certifying ink: crimson fills mean primary action */
+.btn-crimson,
+.btn-green,
 .btn-marigold {
-  background: var(--marigold);
-  color: var(--ink);
-  border: 1px solid var(--marigold);
-  box-shadow: 0 2px 0 rgba(22, 26, 23, 0.25);
+  background: var(--crimson);
+  color: #fff;
+  border: 1px solid var(--crimson);
+  box-shadow: 0 2px 0 oklch(0.3 0.1 27 / 0.4);
 }
 
+.btn-crimson:hover,
+.btn-green:hover,
 .btn-marigold:hover {
-  background: #ffb84a;
-  border-color: #ffb84a;
+  background: var(--crimson-deep);
+  border-color: var(--crimson-deep);
 }
 
+.btn-crimson:active,
+.btn-green:active,
 .btn-marigold:active {
-  box-shadow: 0 0 0 rgba(22, 26, 23, 0.25);
+  box-shadow: 0 0 0 oklch(0.3 0.1 27 / 0.4);
   transform: translateY(2px);
 }
 
-.btn-green {
-  background: var(--green-deep);
-  color: var(--ivory);
-  border: 1px solid var(--green-deep);
-  box-shadow: 0 2px 0 rgba(12, 43, 33, 0.35);
+/* Primary action on crimson drench: paper button, red ink text */
+.btn-white {
+  background: var(--paper);
+  color: var(--crimson-deep);
+  border: 1px solid var(--paper);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.28);
 }
 
-.btn-green:hover {
-  background: var(--green);
-  border-color: var(--green);
+.btn-white:hover {
+  background: var(--blush);
+  border-color: var(--blush);
 }
 
-.btn-green:active {
-  box-shadow: 0 0 0 rgba(12, 43, 33, 0.35);
+.btn-white:active {
+  box-shadow: 0 0 0 rgb(0 0 0 / 0.28);
   transform: translateY(2px);
 }
 
-.btn-outline-ivory {
+/* The student's ink: ballpoint outline for secondary actions on paper */
+.btn-outline-blue {
   background: transparent;
-  color: var(--ivory);
-  border: 1.5px solid rgba(244, 241, 228, 0.4);
+  color: var(--ballpoint);
+  border: 1.5px solid var(--ballpoint);
 }
 
-.btn-outline-ivory:hover {
-  border-color: var(--ivory);
-  background: rgba(244, 241, 228, 0.07);
+.btn-outline-blue:hover {
+  background: var(--blue-wash);
 }
 
 .btn-outline-ink {
@@ -230,7 +253,32 @@ h3 {
   border-color: var(--ink);
 }
 
-/* ————— The stamp ————— */
+.btn-outline-white,
+.btn-outline-ivory {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgb(255 255 255 / 0.45);
+}
+
+.btn-outline-white:hover,
+.btn-outline-ivory:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 0.08);
+}
+
+/* Inline ink link (ballpoint, with arrow) */
+.ink-link {
+  color: var(--ballpoint);
+}
+
+.ink-link:hover {
+  color: var(--ballpoint-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+/* ————— The stamp (legacy, onboarding only) ————— */
 
 .stamp {
   display: inline-flex;
@@ -252,11 +300,11 @@ h3 {
 }
 
 .stamp-marigold {
-  color: var(--marigold);
+  color: var(--rose-bright);
 }
 
 .stamp-green {
-  color: var(--green-ledger);
+  color: var(--crimson-deep);
 }
 
 .stamp-ink {
@@ -283,15 +331,106 @@ h3 {
   }
 }
 
-/* ————— Ledger surfaces ————— */
+/* ————— The checked marks (signature) ————— */
 
+/* Red tick — verification and done states. Final state is the default;
+   drawing only happens where animation is supported. */
+.tick-draw path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Circled mark — the teacher's ring around a score */
+.circle-draw ellipse {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@keyframes circle-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Verify chip — a checked remark in the margin, slightly turned */
+.verify-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1;
+  transform: rotate(-2deg);
+}
+
+/* ————— Paper grammar ————— */
+
+/* Answer-book left margin: paired red rules — the page's own furniture */
+.answer-margin {
+  position: relative;
+}
+
+.answer-margin::before,
+.answer-margin::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.answer-margin::before {
+  left: 0;
+  border-left: 2px solid var(--crimson);
+  opacity: 0.75;
+}
+
+.answer-margin::after {
+  left: 7px;
+  border-left: 1px solid var(--crimson);
+  opacity: 0.45;
+}
+
+/* Ruled baselines — inside writing artifacts only, never section backgrounds */
+.ruled-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 1.9rem,
+    oklch(0.38 0.115 263 / 0.14) 1.9rem,
+    oklch(0.38 0.115 263 / 0.14) calc(1.9rem + 1px)
+  );
+}
+
+/* Index dot leaders */
+.leader {
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted var(--border-strong);
+  transform: translateY(-0.35em);
+}
+
+/* Legacy ledger rules (onboarding only) */
 .ledger-lines-green {
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 3.25rem,
-    rgba(244, 241, 228, 0.07) 3.25rem,
-    rgba(244, 241, 228, 0.07) calc(3.25rem + 1px)
+    rgb(255 255 255 / 0.07) 3.25rem,
+    rgb(255 255 255 / 0.07) calc(3.25rem + 1px)
   );
 }
 
@@ -300,26 +439,29 @@ h3 {
     to bottom,
     transparent 0,
     transparent 3.25rem,
-    rgba(22, 26, 23, 0.05) 3.25rem,
-    rgba(22, 26, 23, 0.05) calc(3.25rem + 1px)
+    oklch(0.25 0.015 27 / 0.05) 3.25rem,
+    oklch(0.25 0.015 27 / 0.05) calc(3.25rem + 1px)
   );
 }
 
+/* ————— Cards & tabs ————— */
+
 .card {
-  background: var(--white);
+  background: var(--paper);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow:
-    0 1px 2px rgba(22, 26, 23, 0.05),
-    0 12px 32px -18px rgba(22, 26, 23, 0.22);
+    0 1px 2px oklch(0.25 0.015 27 / 0.05),
+    0 12px 32px -18px oklch(0.25 0.015 27 / 0.22);
 }
 
+.card-crimson,
 .card-green {
-  background: var(--green);
-  border: 1px solid var(--green-soft);
+  background: var(--crimson-raised);
+  border: 1px solid var(--crimson-edge);
   border-radius: 12px;
-  color: var(--ivory);
-  box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  box-shadow: 0 24px 48px -20px rgb(0 0 0 / 0.45);
 }
 
 /* Index tab that sits on top of a card */
@@ -333,7 +475,7 @@ h3 {
   border-radius: 8px 8px 0 0;
   border: 1px solid var(--border);
   border-bottom: none;
-  background: var(--white);
+  background: var(--paper);
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -341,10 +483,11 @@ h3 {
   text-transform: uppercase;
 }
 
+.index-tab-crimson,
 .index-tab-marigold {
-  background: var(--marigold);
-  border-color: var(--marigold);
-  color: var(--ink);
+  background: var(--crimson);
+  border-color: var(--crimson);
+  color: #fff;
 }
 
 /* ————— Nav ————— */
@@ -362,7 +505,7 @@ h3 {
   right: 0;
   bottom: 0;
   height: 2px;
-  background: var(--marigold);
+  background: var(--crimson);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 220ms var(--ease-out);
@@ -408,11 +551,12 @@ h3 {
 /* ————— Stars ————— */
 
 .star-inked {
-  color: var(--marigold-deep);
+  color: var(--crimson-deep);
 }
 
+.on-crimson .star-inked,
 .on-green .star-inked {
-  color: var(--marigold);
+  color: var(--rose-bright);
 }
 
 /* ————— Reveals ————— */
@@ -447,11 +591,41 @@ h3 {
   animation: rise-in 720ms 110ms var(--ease-out) both;
 }
 
+/* Load-time draws (hero): hidden until drawn, same contract as hero-rise */
+.tick-load path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: tick-draw 420ms var(--ease-out) forwards;
+}
+
+.circle-load ellipse {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: circle-draw 760ms var(--ease-out) forwards;
+}
+
 @supports (animation-timeline: view()) {
   [data-reveal] {
     animation: reveal-up 1ms var(--ease-out) both;
     animation-timeline: view();
     animation-range: entry 0% cover 20%;
+  }
+
+  /* Scroll-driven ink: ticks and circles draw as their artifact enters */
+  [data-draw] .tick-draw path,
+  .tick-draw[data-draw] path {
+    stroke-dashoffset: 1;
+    animation: tick-draw 1ms var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 28%;
+  }
+
+  [data-draw] .circle-draw ellipse,
+  .circle-draw[data-draw] ellipse {
+    stroke-dashoffset: 1;
+    animation: circle-draw 1ms var(--ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 28%;
   }
 }
 
@@ -526,11 +700,549 @@ h3 {
     animation: none !important;
   }
 
+  /* Draws resolve to their final, fully-inked state */
+  .tick-load path,
+  .circle-load ellipse,
+  [data-draw] .tick-draw path,
+  .tick-draw[data-draw] path,
+  [data-draw] .circle-draw ellipse,
+  .circle-draw[data-draw] ellipse {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
   .nav-link::after,
   .footer-link::after,
   .pressable,
   .cta-arrow,
   .faq-icon {
+    transition: none !important;
+  }
+}
+
+/* ————— ClassVault waitlist landing ————— */
+
+.vault-page {
+  --vault-night: #0b1022;
+  --vault-ink: #101528;
+  --vault-violet: #6254e7;
+  --vault-acid: #c7ff72;
+  --vault-paper: #f5f3ee;
+  font-family: var(--font-geist), Arial, Helvetica, sans-serif;
+}
+
+.vault-display {
+  font-family: var(--font-geist), Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.vault-section {
+  position: relative;
+}
+
+.vault-focus {
+  outline: none;
+}
+
+.vault-focus:focus-visible {
+  outline: 2px solid var(--vault-acid);
+  outline-offset: 4px;
+}
+
+.vault-header {
+  pointer-events: none;
+}
+
+.vault-header nav {
+  pointer-events: auto;
+}
+
+.vault-nav,
+.vault-mobile-nav {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(11 16 34 / 0.76);
+  box-shadow: 0 18px 60px -32px rgb(0 0 0 / 0.8);
+  backdrop-filter: blur(22px) saturate(140%);
+}
+
+.vault-logo-mark {
+  background: var(--vault-acid);
+  color: var(--vault-ink);
+  box-shadow: inset 0 0 0 1px rgb(16 21 40 / 0.08);
+}
+
+.vault-nav-link {
+  position: relative;
+  transition: color 200ms ease;
+}
+
+.vault-nav-link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.35rem;
+  left: 0;
+  height: 1px;
+  background: var(--vault-acid);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 300ms var(--ease-out);
+}
+
+.vault-nav-link:hover {
+  color: white;
+}
+
+.vault-nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.vault-button {
+  display: inline-flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding-inline: 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition:
+    transform 260ms var(--ease-settle),
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+.vault-button:hover {
+  transform: translateY(-2px);
+}
+
+.vault-button svg {
+  transition: transform 260ms var(--ease-settle);
+}
+
+.vault-button:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.vault-button-acid {
+  border: 1px solid var(--vault-acid);
+  background: var(--vault-acid);
+  color: var(--vault-ink);
+}
+
+.vault-button-acid:hover {
+  background: #d8ff9d;
+  border-color: #d8ff9d;
+}
+
+.vault-button-light {
+  min-height: 2.55rem;
+  border: 1px solid white;
+  background: white;
+  color: var(--vault-ink);
+}
+
+.vault-button-ghost {
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.04);
+  color: white;
+}
+
+.vault-button-ghost:hover {
+  border-color: rgb(255 255 255 / 0.45);
+  background: rgb(255 255 255 / 0.09);
+}
+
+.vault-button-dark {
+  border: 1px solid var(--vault-ink);
+  background: var(--vault-ink);
+  color: white;
+  box-shadow: 0 18px 50px -22px rgb(16 21 40 / 0.7);
+}
+
+.vault-button-dark:hover {
+  background: var(--vault-violet);
+  border-color: var(--vault-violet);
+}
+
+.vault-ambient {
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.vault-ambient-one {
+  background: radial-gradient(circle, rgb(98 84 231 / 0.48), transparent 68%);
+}
+
+.vault-ambient-two {
+  background: radial-gradient(circle, rgb(199 255 114 / 0.16), transparent 69%);
+}
+
+.vault-hero::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.12'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.vault-hero-figure {
+  isolation: isolate;
+}
+
+.vault-hero-image {
+  background-image: url("/assets/landing/classvault-hero-study-world.webp");
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.78) contrast(1.06) brightness(0.78);
+  transform: scale(1.01);
+  transition: transform 900ms var(--ease-out);
+}
+
+.vault-hero-figure:hover .vault-hero-image {
+  transform: scale(1.05);
+}
+
+.vault-product-window {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(10 15 33 / 0.84);
+  box-shadow: 0 35px 90px -35px rgb(0 0 0 / 0.85);
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+.vault-roadmap-card {
+  border: 1px solid rgb(255 255 255 / 0.62);
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 28px 70px -28px rgb(0 0 0 / 0.75);
+  backdrop-filter: blur(18px);
+}
+
+.vault-marquee {
+  overflow: hidden;
+}
+
+.vault-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: vault-marquee 28s linear infinite;
+}
+
+@keyframes vault-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.vault-bento-card {
+  min-height: 25rem;
+  color: var(--vault-ink);
+  transition:
+    transform 400ms var(--ease-out),
+    box-shadow 400ms var(--ease-out);
+}
+
+.vault-bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 35px 80px -45px rgb(16 21 40 / 0.5);
+}
+
+.vault-bento-card:hover .vault-bento-visual {
+  transform: scale(1.035);
+}
+
+.vault-bento-visual {
+  transform-origin: center bottom;
+  transition: transform 700ms var(--ease-out);
+}
+
+.vault-bento-notes {
+  background: #ded9ff;
+}
+
+.vault-bento-universities {
+  background: var(--vault-violet);
+  color: white;
+}
+
+.vault-bento-rooms {
+  background: var(--vault-acid);
+}
+
+.vault-bento-roadmaps {
+  background: #ffd4c4;
+}
+
+.vault-bento-detail,
+.vault-bento-copy {
+  color: rgb(16 21 40 / 0.58);
+}
+
+.vault-bento-universities .vault-bento-detail,
+.vault-bento-universities .vault-bento-copy {
+  color: rgb(255 255 255 / 0.64);
+}
+
+.vault-bento-arrow {
+  border-color: rgb(16 21 40 / 0.16);
+  color: var(--vault-ink);
+}
+
+.vault-bento-universities .vault-bento-arrow {
+  border-color: rgb(255 255 255 / 0.18);
+  color: white;
+}
+
+@media (min-width: 1024px) {
+  .vault-bento-notes {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .vault-bento-universities {
+    grid-column: span 2;
+    grid-row: span 1;
+    min-height: 0;
+  }
+
+  .vault-bento-rooms,
+  .vault-bento-roadmaps {
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 0;
+  }
+}
+
+.vault-horizontal-accordion {
+  width: 100%;
+}
+
+.vault-accordion-panel {
+  flex: 1;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  color: white;
+  transition:
+    flex 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 250ms ease;
+}
+
+.vault-accordion-panel.is-active {
+  border-color: rgb(199 255 114 / 0.42);
+}
+
+.vault-accordion-image {
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.82) contrast(1.08) brightness(0.72);
+}
+
+.vault-accordion-image[data-image="notes"] {
+  background-image: url("/assets/landing/classvault-discover-notes.webp");
+}
+
+.vault-accordion-image[data-image="verify"] {
+  background-image: url("/assets/landing/classvault-verified-university.webp");
+}
+
+.vault-accordion-image[data-image="room"] {
+  background-image: url("/assets/landing/classvault-live-study-room.webp");
+}
+
+.vault-accordion-image[data-image="roadmap"] {
+  background-image: url("/assets/landing/classvault-study-roadmap.webp");
+}
+
+@media (min-width: 1024px) {
+  .vault-accordion-panel.is-active {
+    flex: 3.35;
+  }
+}
+
+.vault-stack-list {
+  padding-bottom: 6rem;
+}
+
+.vault-stack-card {
+  min-height: 30rem;
+}
+
+.vault-stack-0 {
+  top: 7rem;
+  z-index: 1;
+}
+
+.vault-stack-1 {
+  top: 8rem;
+  z-index: 2;
+  margin-top: 12rem;
+}
+
+.vault-stack-2 {
+  top: 9rem;
+  z-index: 3;
+  margin-top: 12rem;
+}
+
+.vault-cta-orbit::before,
+.vault-cta-orbit::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  border: 1px solid rgb(16 21 40 / 0.08);
+}
+
+.vault-cta-orbit::before {
+  inset: 5rem;
+}
+
+.vault-cta-orbit::after {
+  inset: 10rem;
+}
+
+.vault-footer-link {
+  position: relative;
+  border-radius: 0.15rem;
+  transition: color 180ms ease;
+}
+
+.vault-footer-link:hover {
+  color: white;
+}
+
+@media (max-width: 1023px) {
+  .vault-flow-heading {
+    position: static !important;
+    transform: none !important;
+  }
+
+  .vault-stack-1,
+  .vault-stack-2 {
+    margin-top: 4rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .vault-button {
+    width: 100%;
+  }
+
+  .vault-nav .vault-button {
+    width: auto;
+  }
+
+  .vault-stack-card {
+    min-height: 27rem;
+  }
+
+  .vault-stack-0 {
+    top: 5.5rem;
+  }
+
+  .vault-stack-1 {
+    top: 6.25rem;
+  }
+
+  .vault-stack-2 {
+    top: 7rem;
+  }
+}
+
+/* ————— Dashboard (vault) ————— */
+
+.dash-glass {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.04);
+  box-shadow: 0 24px 60px -32px rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2rem;
+  padding-inline: 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.dash-noise {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.16;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.12'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+@keyframes dash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dash-rise {
+  animation: dash-rise 640ms var(--ease-out) both;
+}
+
+.dash-rise-1 {
+  animation-delay: 70ms;
+}
+
+.dash-rise-2 {
+  animation-delay: 150ms;
+}
+
+.dash-rise-3 {
+  animation-delay: 230ms;
+}
+
+.dash-rise-4 {
+  animation-delay: 310ms;
+}
+
+/* Current section indicator inside the dashboard pill nav */
+.vault-nav .vault-nav-link[aria-current="page"] {
+  color: #fff;
+}
+
+.vault-nav .vault-nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-rise {
+    animation: none !important;
+  }
+
+  .vault-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .vault-button,
+  .vault-button svg,
+  .vault-nav-link::after,
+  .vault-hero-image,
+  .vault-bento-card,
+  .vault-bento-visual,
+  .vault-accordion-panel,
+  .vault-accordion-image {
     transition: none !important;
   }
 }

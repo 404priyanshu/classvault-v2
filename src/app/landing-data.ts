@@ -1,114 +1,139 @@
-// Illustrative product vignettes. Numbers inside mock UI are sample data,
-// clearly presented as product previews — never page-level claims.
+export const capabilityLabels = [
+  "Rated notes",
+  "PDF search",
+  "Verified universities",
+  "Live study rooms",
+  "Personal roadmaps",
+  "Scoped communities",
+] as const;
 
-export const noteRows = [
+export const featureCards = [
   {
-    entry: "042",
-    title: "Operating Systems — Unit 3",
-    subject: "Operating Systems",
-    scope: "VIT Vellore",
-    rating: 5,
-    label: "4.9",
+    id: "notes",
+    title: "Know which note is worth opening.",
+    description:
+      "Search titles, subjects, and the text inside PDFs and images. Ratings and scope stay visible before every download.",
+    detail: "Full-text search · 1–5 star ratings",
   },
   {
-    entry: "043",
-    title: "Data Structures — Complete Notes",
-    subject: "Data Structures",
-    scope: "Public",
-    rating: 5,
-    label: "4.8",
+    id: "universities",
+    title: "Your university, properly verified.",
+    description:
+      "College-email verification opens a private institution-wide space for notes, conversations, and study rooms.",
+    detail: "One institution · one verified membership",
   },
   {
-    entry: "044",
-    title: "DBMS — Exam Revision Pack",
-    subject: "DBMS",
-    scope: "VIT Vellore",
-    rating: 4,
-    label: "4.7",
+    id: "rooms",
+    title: "Turn revision into a room.",
+    description:
+      "Video, audio, chat, a shared timer, and participant controls for focused sessions that end when the studying does.",
+    detail: "Temporary by design",
+  },
+  {
+    id: "roadmaps",
+    title: "Move from material to momentum.",
+    description:
+      "Generate a phased plan with tasks, checklists, progress, and links back to the notes that shaped it.",
+    detail: "Personalized · source-linked",
   },
 ] as const;
 
-export const trustMechanics = [
+export const platformPanels = [
   {
-    step: "1",
-    title: "Every note is scoped before it's seen",
+    id: "discover",
+    title: "Discover",
+    shortTitle: "Search every page",
     description:
-      "A note belongs to the public community or to one verified university — never both, never ambiguous. You always know where material came from before you open it.",
+      "Find useful material across titles, tags, and extracted file text without searching an unscoped global pile.",
+    image: "notes",
   },
   {
-    step: "2",
-    title: "Classmates rate what they actually used",
+    id: "verify",
+    title: "Verify",
+    shortTitle: "Trust the source",
     description:
-      "Ratings come from students with real access to the note's community — one to five stars, revisable, tied to the file itself.",
+      "See whether a note is public or belongs to your verified university, then use weighted ratings to judge it.",
+    image: "verify",
   },
   {
-    step: "3",
-    title: "Rankings resist gaming",
+    id: "study",
+    title: "Study",
+    shortTitle: "Open a live room",
     description:
-      "A note with three perfect ratings doesn't outrank one trusted by a whole class. Weighting considers count and recency, not just the average.",
+      "Bring classmates into a focused room with video, audio, chat, participant controls, and a synced timer.",
+    image: "room",
   },
   {
-    step: "4",
-    title: "Universities are verified, not self-declared",
+    id: "plan",
+    title: "Plan",
+    shortTitle: "Build a roadmap",
     description:
-      "Joining a university community requires proving control of a college email on that institution's allowlisted domain. No screenshots, no honor system.",
+      "Turn plan-eligible notes into an in-depth study path or exam revision sequence, with every source attached.",
+    image: "roadmap",
   },
 ] as const;
 
-export const roadmapSteps = [
-  { title: "Core concepts", detail: "Processes, threads, and states", done: true },
-  { title: "Scheduling", detail: "Algorithms and solved examples", done: true },
-  { title: "Memory", detail: "Paging, segmentation, and practice", done: false },
-  { title: "Exam revision", detail: "High-weight questions and recall", done: false },
+export const studyFlow = [
+  {
+    title: "Find the signal",
+    description:
+      "Search the material itself, compare weighted ratings, and keep public and university notes in the right scope.",
+    meta: "Search · scope · ratings",
+  },
+  {
+    title: "Study in company",
+    description:
+      "Start a temporary room, invite classmates who have access, and keep the session moving with a shared timer.",
+    meta: "Video · audio · chat · timer",
+  },
+  {
+    title: "Leave with a route",
+    description:
+      "Generate a phased roadmap with estimated tasks, progress checkboxes, and source-note links you can revisit.",
+    meta: "Phases · tasks · sources",
+  },
+] as const;
+
+export const productPrinciples = [
+  {
+    quote: "I should know why a note is worth opening before I download it.",
+    detail:
+      "Ratings, rating volume, university scope, and subject context stay beside the result.",
+    marker: "Trust before download",
+  },
+  {
+    quote: "My university space should feel private without becoming another noisy feed.",
+    detail:
+      "Verification gates the institution, while lightweight conversations keep the focus on academic help.",
+    marker: "Community without noise",
+  },
+  {
+    quote: "A generated plan should show the material it learned from.",
+    detail:
+      "Roadmap phases retain source-note links and respect access rules when a plan is shared.",
+    marker: "Personalization with sources",
+  },
 ] as const;
 
 export const planRows = [
   {
-    feature: "Find and download notes",
-    free: "Public + your university",
-    pro: "Public + your university",
+    feature: "Notes and communities",
+    free: "Public and verified university access",
+    pro: "Public and verified university access",
   },
   {
-    feature: "Create study roadmaps",
-    free: "Limited generations",
-    pro: "Unlimited, fair-use",
+    feature: "Study roadmaps",
+    free: "Limited generations from personal and public notes",
+    pro: "Unlimited generations with university-note context",
   },
   {
-    feature: "Host study rooms",
-    free: "Core room controls",
-    pro: "Longer rooms + host tools",
+    feature: "Study rooms",
+    free: "Core rooms and host controls",
+    pro: "Longer rooms, more capacity, advanced controls",
   },
   {
     feature: "Uploads and storage",
     free: "Essential limits",
     pro: "Expanded limits",
-  },
-] as const;
-
-export const faqs = [
-  {
-    question: "Who is ClassVault for?",
-    answer:
-      "Indian college students who want better study material, focused peer sessions, and a clearer exam plan — without another noisy social feed.",
-  },
-  {
-    question: "Do I need a college email?",
-    answer:
-      "Not for the public community. A verified college email is only required for university-specific notes, conversations, and study rooms.",
-  },
-  {
-    question: "What if my university isn't covered?",
-    answer:
-      "Request it. Send your university's name, website, and official email domain — we review and add institutions to the verified list before launch and after.",
-  },
-  {
-    question: "Can I download the notes I find?",
-    answer:
-      "Yes. If you can access a note's public or university scope, you can view and download the original PDF or image file.",
-  },
-  {
-    question: "What will Pro add?",
-    answer:
-      "Pro expands uploads and storage, unlocks community-powered roadmaps, and gives study-room hosts longer sessions and stronger controls. University access itself is never paid.",
   },
 ] as const;

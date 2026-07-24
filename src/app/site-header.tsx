@@ -1,159 +1,113 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { navItems } from "./nav";
+import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 
-const launchHref = "/coming-soon";
+const navigation = [
+  { label: "Platform", href: "#platform" },
+  { label: "Study flow", href: "#study-flow" },
+  { label: "Plans", href: "#plans" },
+] as const;
 
 export function SiteHeader(): ReactElement {
-  const [activeId, setActiveId] = useState<string>("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const sections = navItems
-      .map((item) => document.getElementById(item.href.slice(1)))
-      .filter((section): section is HTMLElement => section !== null);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActiveId(visible.target.id);
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [menuOpen]);
 
   return (
-    <header
-      className={`sticky top-0 z-50 bg-[var(--green-deep)] text-[var(--ivory)] transition-shadow duration-200 ${
-        scrolled
-          ? "shadow-[0_14px_30px_-18px_rgba(0,0,0,0.55)]"
-          : "shadow-none"
-      }`}
-    >
-      <div
-        className={`page-shell flex h-[68px] items-center justify-between gap-6 border-b lg:h-[76px] ${
-          scrolled ? "border-transparent" : "border-[var(--green-soft)]"
-        }`}
+    <header className="vault-header fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
+      <nav
+        aria-label="Primary navigation"
+        className="vault-nav mx-auto flex max-w-[1320px] items-center justify-between rounded-full px-4 py-3 sm:px-5"
       >
-        <Link
-          className="pressable focus-ring flex shrink-0 items-center gap-3"
+        <a
           href="#top"
-          aria-label="ClassVault home"
+          className="vault-focus flex items-center gap-2.5 rounded-full text-white"
+          onClick={() => setMenuOpen(false)}
         >
-          <span className="relative size-9 overflow-hidden rounded-[8px] bg-white">
-            <Image
-              src="/icon.svg"
-              alt=""
-              fill
-              priority
-              sizes="36px"
-              className="object-contain p-1"
-            />
+          <span className="vault-logo-mark grid size-8 place-items-center rounded-full text-sm font-black">
+            C
           </span>
-          <span className="font-display text-[21px] leading-none">
+          <span className="text-[15px] font-semibold tracking-[-0.02em]">
             ClassVault
           </span>
-        </Link>
+        </a>
 
-        <nav
-          aria-label="Main navigation"
-          className="hidden items-center gap-7 text-[13.5px] font-semibold text-[var(--ivory-muted)] lg:flex"
-        >
-          {navItems.map((item) => {
-            const active = activeId === item.href.slice(1);
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "location" : undefined}
-                className={`focus-ring nav-link transition-colors hover:text-[var(--ivory)] ${
-                  active ? "text-[var(--ivory)]" : ""
-                }`}
-              >
-                {item.label}
-              </a>
-            );
-          })}
-        </nav>
-
-        <div className="flex items-center gap-2.5">
-          <div className="hidden sm:block">
-            <Link
-              href={launchHref}
-              className="btn btn-marigold pressable focus-ring cta-link !h-10 !px-4 !text-[13px]"
+        <div className="hidden items-center gap-7 md:flex">
+          {navigation.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="vault-nav-link vault-focus rounded-sm text-sm text-white/70"
             >
-              Get launch updates
-            </Link>
-          </div>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-            className="pressable focus-ring grid size-10 place-items-center rounded-[8px] border border-[var(--green-soft)] text-[var(--ivory)] lg:hidden"
-          >
-            {menuOpen ? (
-              <X aria-hidden="true" className="size-5" />
-            ) : (
-              <Menu aria-hidden="true" className="size-5" />
-            )}
-          </button>
+              {item.label}
+            </a>
+          ))}
         </div>
-      </div>
+
+        <div className="hidden items-center gap-2 sm:flex">
+          <Link
+            href="/login"
+            className="vault-focus rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-colors hover:text-white"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="vault-button vault-button-light vault-focus"
+          >
+            Create account
+            <ArrowUpRight aria-hidden="true" className="size-4" />
+          </Link>
+        </div>
+
+        <button
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          className="vault-focus grid size-10 place-items-center rounded-full border border-white/15 text-white md:hidden"
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          {menuOpen ? (
+            <X aria-hidden="true" className="size-5" />
+          ) : (
+            <List aria-hidden="true" className="size-5" />
+          )}
+        </button>
+      </nav>
 
       {menuOpen ? (
         <nav
-          id="mobile-nav"
+          id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="border-t border-[var(--green-soft)] bg-[var(--green-deep)] lg:hidden"
+          className="vault-mobile-nav mx-auto mt-2 max-w-[1320px] rounded-[1.5rem] p-3 md:hidden"
         >
-          <div className="page-shell py-3">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="focus-ring flex items-center justify-between border-b border-[var(--green-soft)] py-4 text-[15px] font-semibold text-[var(--ivory)] last:border-b-0"
-              >
-                {item.label}
-              </a>
-            ))}
-            <div className="mt-4 mb-2 sm:hidden">
-              <Link
-                href={launchHref}
-                onClick={() => setMenuOpen(false)}
-                className="btn btn-marigold pressable focus-ring w-full"
-              >
-                Get launch updates
-              </Link>
-            </div>
-          </div>
+          {navigation.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="vault-focus block rounded-xl px-4 py-3 text-base font-medium text-white/80"
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </a>
+          ))}
+          <Link
+            href="/login"
+            className="vault-focus mt-2 block rounded-xl border-t border-white/10 px-4 py-3 text-base font-medium text-white/80"
+            onClick={() => setMenuOpen(false)}
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="vault-button vault-button-acid vault-focus mt-2 flex w-full"
+            onClick={() => setMenuOpen(false)}
+          >
+            Create account
+            <ArrowUpRight aria-hidden="true" className="size-4" />
+          </Link>
         </nav>
       ) : null}
     </header>

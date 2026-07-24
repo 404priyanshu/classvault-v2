@@ -1,327 +1,208 @@
+"use client";
+
 import type { ReactElement } from "react";
+import { useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
+  ArrowDownRight,
   Check,
-  Download,
+  FileSearch,
   LockKeyhole,
-  MessageSquareText,
-  Mic,
   Route,
-  Star,
-  Video,
+  Timer,
 } from "lucide-react";
-import { noteRows, roadmapSteps } from "@/app/landing-data";
+import { platformPanels, studyFlow } from "@/app/landing-data";
 
-function InkedStars({ filled }: { filled: number }): ReactElement {
-  return (
-    <span aria-hidden="true" className="inline-flex gap-[2px]">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={`size-3 ${
-            i < filled
-              ? "fill-[var(--marigold-deep)] text-[var(--marigold-deep)]"
-              : "text-[var(--field-line)]"
-          }`}
-        />
-      ))}
-    </span>
-  );
-}
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-/* ————— Notes: the register ledger ————— */
+const panelIcons = [FileSearch, LockKeyhole, Timer, Route] as const;
 
-export function NotesSection(): ReactElement {
-  return (
-    <section
-      id="notes"
-      className="on-light ledger-lines-light border-b border-[var(--field-line)] bg-[var(--off-white)] py-20 sm:py-24 lg:py-32"
-    >
-      <div className="page-shell">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-          <div>
-            <h2 className="font-display text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.08] text-[var(--ink)]">
-              Find the note worth opening.
-            </h2>
-            <p className="prose-measure mt-6 text-lg leading-8 text-[var(--ink-body)]">
-              Search runs across titles, subjects, and the text inside the
-              files themselves. Rating and scope sit next to every result, so
-              you judge before you download.
-            </p>
-          </div>
-        </div>
-
-        {/* The ledger table */}
-        <figure
-          data-reveal
-          aria-label="Product preview: the notes register with ratings and scope"
-          className="mt-12"
-        >
-          <div className="card overflow-hidden">
-            <div className="flex items-baseline justify-between border-b border-[var(--border-strong)] px-5 py-4 sm:px-7">
-              <span className="text-[12px] font-bold tracking-[0.08em] text-[var(--ink-muted)] uppercase">
-                Register · Operating Systems
-              </span>
-              <span className="hidden text-[12.5px] text-[var(--ink-muted)] sm:block">
-                Public + VIT Vellore
-              </span>
-            </div>
-
-            <ul>
-              {noteRows.map((note, index) => (
-                <li
-                  key={note.title}
-                  className={`grid grid-cols-[auto_1fr_auto] items-center gap-x-4 px-5 py-5 sm:gap-x-6 sm:px-7 ${
-                    index < noteRows.length - 1
-                      ? "border-b border-[var(--field-line)]"
-                      : ""
-                  } ${index === 0 ? "bg-[var(--marigold-wash)]" : ""}`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="font-display hidden text-lg text-[var(--ink-muted)] sm:block"
-                  >
-                    {note.entry}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-[15px] font-bold text-[var(--ink)] sm:text-base">
-                      {note.title}
-                    </p>
-                    <p className="mt-1 text-[12.5px] text-[var(--ink-muted)]">
-                      {note.subject} · {note.scope}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4 sm:gap-6">
-                    <div className="text-right">
-                      <InkedStars filled={note.rating} />
-                      <p className="mt-1 text-[12px] font-semibold text-[var(--ink-body)]">
-                        {note.label}
-                      </p>
-                    </div>
-                    <span className="grid size-9 place-items-center rounded-[8px] border border-[var(--border-strong)] text-[var(--ink)]">
-                      <Download aria-hidden="true" className="size-4" />
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <figcaption className="mt-4 text-[12px] text-[var(--ink-muted)]">
-            Product preview — sample data. Original PDF and image files,
-            downloadable with scope access.
-          </figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-/* ————— Rooms: the late-night section ————— */
-
-export function RoomsSection(): ReactElement {
-  const participants = ["AK", "SM", "RP", "NJ"];
+export function PlatformAccordion(): ReactElement {
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section
-      id="rooms"
-      className="on-green ledger-lines-green bg-[var(--green-deep)] py-20 text-[var(--ivory)] sm:py-24 lg:py-32"
-    >
-      <div className="page-shell grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-        <div>
-          <h2 className="font-display text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.08] text-[var(--ivory)]">
-            Late nights are easier together.
+    <section className="vault-section bg-[#0b1022] px-5 py-32 text-white sm:px-8 md:py-44">
+      <div className="mx-auto max-w-[1320px]">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
+          <h2 className="vault-display max-w-4xl text-[clamp(3rem,6vw,6.5rem)] leading-[0.93] tracking-[-0.065em]">
+            Four surfaces.
+            <br />
+            One continuous rhythm.
           </h2>
-          <p className="prose-measure mt-6 text-lg leading-8 text-[var(--ivory-muted)]">
-            Study rooms are temporary spaces with a shared timer, light chat,
-            audio, and video. They end when everyone leaves — no recordings, no
-            archive, no feed to scroll the next morning.
+          <p className="max-w-xl text-base leading-7 text-white/55 lg:justify-self-end lg:text-lg lg:leading-8">
+            Move from discovery to action without losing context. Each surface
+            keeps scope, trust, and source material attached.
           </p>
-          <dl className="mt-9 grid gap-x-8 gap-y-6 border-t border-[var(--green-soft)] pt-7 sm:grid-cols-2">
-            <div>
-              <dt className="text-[15px] font-bold text-[var(--ivory)]">
-                Scope still applies
-              </dt>
-              <dd className="mt-2 text-sm leading-6 text-[var(--ivory-muted)]">
-                University room links only open for verified members. Sharing a
-                link never bypasses the boundary.
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[15px] font-bold text-[var(--ivory)]">
-                Nothing is kept
-              </dt>
-              <dd className="mt-2 text-sm leading-6 text-[var(--ivory-muted)]">
-                Only safety records persist for moderation — never video,
-                never full chat.
-              </dd>
-            </div>
-          </dl>
         </div>
 
-        {/* Room vignette */}
-        <figure
-          data-reveal
-          aria-label="Product preview: a live study room with shared timer"
-        >
-          <div className="card-green overflow-hidden">
-            <div className="flex items-center justify-between border-b border-[var(--green-soft)] px-5 py-4 sm:px-6">
-              <span className="inline-flex items-center gap-2.5 text-[13px] font-bold text-[var(--ivory)]">
+        <div className="vault-horizontal-accordion mt-16 flex min-h-[560px] flex-col gap-2 lg:flex-row">
+          {platformPanels.map((panel, index) => {
+            const Icon = panelIcons[index];
+            const active = activeIndex === index;
+
+            return (
+              <button
+                key={panel.id}
+                type="button"
+                aria-pressed={active}
+                className={`vault-accordion-panel vault-focus group relative min-h-[210px] overflow-hidden rounded-[1.6rem] text-left ${
+                  active ? "is-active" : ""
+                }`}
+                onClick={() => setActiveIndex(index)}
+                onFocus={() => setActiveIndex(index)}
+                onMouseEnter={() => setActiveIndex(index)}
+              >
                 <span
                   aria-hidden="true"
-                  className="pulse-dot size-2 rounded-full bg-[var(--marigold)]"
+                  data-image={panel.image}
+                  className="vault-accordion-image absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105"
                 />
-                OS exam sprint
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-[7px] border border-[var(--green-soft)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--ivory-muted)]">
-                <LockKeyhole aria-hidden="true" className="size-3" />
-                VIT Vellore only
-              </span>
-            </div>
+                <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,12,28,0.04)_10%,rgba(8,12,28,0.94)_92%)]" />
 
-            <div className="grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:p-6">
-              <div className="rounded-[10px] border border-[var(--green-soft)] bg-[var(--green-deep)] p-6 text-center sm:p-8">
-                <p className="font-display text-[clamp(3rem,8vw,4.5rem)] leading-none text-[var(--ivory)]">
-                  42:17
-                </p>
-                <p className="mt-3 text-[12px] tracking-[0.06em] text-[var(--ivory-faint)] uppercase">
-                  Focus block in progress
-                </p>
-                <div className="mx-auto mt-5 h-1.5 w-44 max-w-full overflow-hidden rounded-full bg-[rgba(244,241,228,0.14)]">
-                  <span className="progress-draw block h-full w-[62%] rounded-full bg-[var(--marigold)]" />
-                </div>
-              </div>
-
-              <div className="flex flex-row items-center justify-between gap-4 sm:w-40 sm:flex-col sm:items-stretch">
-                <div>
-                  <div aria-hidden="true" className="flex -space-x-2">
-                    {participants.map((p, i) => (
-                      <span
-                        key={p}
-                        className={`grid size-9 place-items-center rounded-full border-2 border-[var(--green)] text-[10px] font-bold ${
-                          i === 0
-                            ? "bg-[var(--marigold)] text-[var(--ink)]"
-                            : "bg-[var(--ivory)] text-[var(--ink)]"
-                        }`}
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="mt-2.5 text-[12px] text-[var(--ivory-muted)]">
-                    6 classmates focusing
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  {[Mic, Video, MessageSquareText].map((Icon, i) => (
-                    <span
-                      key={i}
-                      className="grid size-9 place-items-center rounded-[8px] border border-[var(--green-soft)] text-[var(--ivory-muted)]"
-                    >
-                      <Icon aria-hidden="true" className="size-3.5" />
+                <span className="relative flex h-full min-h-[210px] flex-col justify-between p-5 sm:p-7 lg:min-h-[560px]">
+                  <span className="flex items-center justify-between gap-4">
+                    <span className="grid size-11 place-items-center rounded-full border border-white/15 bg-black/20 backdrop-blur-md">
+                      <Icon aria-hidden="true" className="size-4.5" />
                     </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          <figcaption className="mt-4 text-center text-[12px] text-[var(--ivory-faint)]">
-            Product preview — sample data
-          </figcaption>
-        </figure>
+                    <span className="grid size-10 place-items-center rounded-full border border-white/15 bg-black/20 transition-transform duration-500 group-hover:rotate-45">
+                      <ArrowDownRight aria-hidden="true" className="size-4" />
+                    </span>
+                  </span>
+
+                  <span>
+                    <span className="block text-[11px] font-bold tracking-[0.14em] text-[#c7ff72] uppercase">
+                      {panel.title}
+                    </span>
+                    <span className="vault-display mt-3 block text-3xl leading-none tracking-[-0.045em] sm:text-4xl">
+                      {panel.shortTitle}
+                    </span>
+                    <span
+                      className={`mt-4 block max-w-md text-sm leading-6 text-white/65 transition-opacity duration-500 sm:text-base sm:leading-7 ${
+                        active ? "opacity-100" : "lg:opacity-0"
+                      }`}
+                    >
+                      {panel.description}
+                    </span>
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ————— Roadmaps ————— */
+export function StudyFlowSection(): ReactElement {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
 
-export function RoadmapsSection(): ReactElement {
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia();
+
+      media.add(
+        "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          if (!sectionRef.current || !headingRef.current) return;
+
+          ScrollTrigger.create({
+            trigger: sectionRef.current,
+            start: "top top+=112",
+            end: "bottom bottom-=120",
+            pin: headingRef.current,
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+          });
+
+          const cards = gsap.utils.toArray<HTMLElement>(
+            ".vault-stack-card",
+            sectionRef.current,
+          );
+
+          cards.forEach((card, index) => {
+            if (index === 0) return;
+
+            gsap.fromTo(
+              card,
+              { y: 120, scale: 0.94 },
+              {
+                y: 0,
+                scale: 1,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 88%",
+                  end: "top 42%",
+                  scrub: 0.8,
+                },
+              },
+            );
+          });
+        },
+      );
+
+      return () => media.revert();
+    },
+    { scope: sectionRef },
+  );
+
   return (
     <section
-      id="roadmaps"
-      className="on-light border-b border-[var(--field-line)] bg-white py-20 sm:py-24 lg:py-32"
+      id="study-flow"
+      ref={sectionRef}
+      className="vault-section bg-[#6254e7] px-5 py-32 text-white sm:px-8 md:py-44"
     >
-      <div className="page-shell grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
-        {/* Roadmap vignette */}
-        <figure
-          data-reveal
-          aria-label="Product preview: a generated study roadmap with checked phases"
-          className="order-2 lg:order-1"
-        >
-          <div className="card relative overflow-hidden px-5 pt-8 pb-2 sm:px-7">
-            <span className="index-tab left-5 sm:left-7">
-              <Route aria-hidden="true" className="mr-1.5 size-3.5" />
-              Roadmap
-            </span>
-
-            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[var(--border-strong)] pb-4">
-              <p className="font-display text-xl text-[var(--ink)]">
-                Operating Systems · 8 days
-              </p>
-              <p className="text-[13px] font-semibold text-[var(--marigold-deep)]">
-                2 of 4 phases done
-              </p>
-            </div>
-
-            <ol>
-              {roadmapSteps.map((step, index) => (
-                <li
-                  key={step.title}
-                  className={`grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4.5 ${
-                    index < roadmapSteps.length - 1
-                      ? "border-b border-[var(--field-line)]"
-                      : ""
-                  }`}
-                >
-                  <span
-                    className={`grid size-7 place-items-center rounded-full text-[12px] font-bold ${
-                      step.done
-                        ? "bg-[var(--green-deep)] text-[var(--marigold)]"
-                        : "border border-[var(--border-strong)] bg-white text-[var(--ink-muted)]"
-                    }`}
-                  >
-                    {step.done ? (
-                      <Check
-                        aria-hidden="true"
-                        className="size-3.5"
-                        strokeWidth={3}
-                      />
-                    ) : (
-                      index + 1
-                    )}
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-bold text-[var(--ink)]">
-                      {step.title}
-                    </p>
-                    <p className="mt-0.5 text-[12.5px] text-[var(--ink-muted)]">
-                      {step.detail}
-                    </p>
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-[0.08em] text-[var(--ink-muted)] uppercase">
-                    {step.done ? "Done" : `Day ${index * 2 + 1}`}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <figcaption className="mt-4 text-[12px] text-[var(--ink-muted)]">
-            Product preview — sample data. Sources link back to the notes used.
-          </figcaption>
-        </figure>
-
-        <div className="order-1 lg:order-2">
-          <h2 className="font-display text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.08] text-[var(--ink)]">
-            Walk into exam week with a plan.
+      <div className="mx-auto grid max-w-[1320px] gap-16 lg:grid-cols-[0.78fr_1.22fr] lg:gap-24">
+        <div ref={headingRef} className="vault-flow-heading self-start">
+          <p className="text-xs font-bold tracking-[0.14em] text-[#d9ffa3] uppercase">
+            From search to study plan
+          </p>
+          <h2 className="vault-display mt-5 max-w-2xl text-[clamp(3.1rem,6vw,6.8rem)] leading-[0.91] tracking-[-0.07em]">
+            Keep the source. Lose the scramble.
           </h2>
-          <p className="prose-measure mt-6 text-lg leading-8 text-[var(--ink-body)]">
-            Give ClassVault a topic and a study mode — in-depth or exam
-            revision — and it builds a phased roadmap from the notes your plan
-            can use, with sources linked and progress private to you.
+          <p className="mt-7 max-w-lg text-base leading-7 text-white/65 sm:text-lg sm:leading-8">
+            The product is designed as a sequence, not a feed. Every step
+            narrows the distance between material you can trust and work you
+            can actually finish.
           </p>
-          <p className="prose-measure mt-4 text-[15px] leading-7 text-[var(--ink-muted)]">
-            Roadmaps are saved snapshots: they don&apos;t shift underneath you
-            when notes change, and they stay yours after any plan change.
-          </p>
+        </div>
+
+        <div className="vault-stack-list">
+          {studyFlow.map((step, index) => (
+            <article
+              key={step.title}
+              className={`vault-stack-card vault-stack-${index} sticky overflow-hidden rounded-[2rem] border border-white/35 bg-[#f7f6f1] p-7 text-[#101528] shadow-[0_35px_90px_-45px_rgba(5,7,18,0.65)] sm:p-10`}
+            >
+              <div className="flex items-center justify-between gap-4 border-b border-[#101528]/10 pb-6">
+                <span className="text-xs font-bold tracking-[0.12em] text-[#6254e7] uppercase">
+                  {step.meta}
+                </span>
+                <span className="grid size-11 place-items-center rounded-full bg-[#6254e7]/10 text-[#6254e7]">
+                  <Route aria-hidden="true" className="size-4.5" />
+                </span>
+              </div>
+
+              <div className="py-12 sm:py-16">
+                <h3 className="vault-display max-w-xl text-[clamp(2.4rem,4vw,4.8rem)] leading-[0.95] tracking-[-0.055em]">
+                  {step.title}
+                </h3>
+                <p className="mt-6 max-w-xl text-base leading-7 text-[#5e6474] sm:text-lg sm:leading-8">
+                  {step.description}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 border-t border-[#101528]/10 pt-6 text-sm font-semibold text-[#101528]">
+                <span className="grid size-8 place-items-center rounded-full bg-[#c7ff72]">
+                  <Check aria-hidden="true" className="size-4" />
+                </span>
+                Source and access rules stay attached
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

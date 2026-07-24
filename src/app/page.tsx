@@ -1,69 +1,82 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
+import { SiteHeader } from "./site-header";
 import { HeroVignette } from "@/components/landing/hero-vignette";
 import {
-  TrustMechanicsSection,
-  UniversitySection,
+  CapabilityMarquee,
+  FeatureBento,
 } from "@/components/landing/trust-sections";
 import {
-  NotesSection,
-  RoadmapsSection,
-  RoomsSection,
+  PlatformAccordion,
+  StudyFlowSection,
 } from "@/components/landing/product-sections";
 import {
-  FaqSection,
   FinalCta,
   PlansSection,
+  ProductPrinciples,
   SiteFooter,
 } from "@/components/landing/conversion-sections";
-import { SiteHeader } from "./site-header";
-
-const launchHref = "/coming-soon";
 
 function Hero(): ReactElement {
   return (
     <section
       id="top"
-      className="on-green ledger-lines-green bg-[var(--green-deep)] text-[var(--ivory)]"
+      className="vault-hero relative overflow-hidden bg-[#0b1022] px-5 pt-36 pb-20 text-white sm:px-8 sm:pt-40 sm:pb-24 lg:min-h-screen lg:pt-44"
     >
-      <div className="page-shell grid gap-14 pt-14 pb-16 sm:pt-18 sm:pb-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:pt-20 lg:pb-24">
-        <div className="hero-rise max-w-2xl">
-          <p className="text-[14px] font-semibold text-[var(--marigold)]">
-            A study platform for Indian college students
-          </p>
-          <h1 className="font-display mt-5 text-[clamp(2.8rem,6.5vw,4.9rem)] leading-[1.04] text-[var(--ivory)]">
-            Notes your classmates already trust.
-          </h1>
-          <p className="prose-measure mt-7 max-w-xl text-lg leading-8 text-[var(--ivory-muted)] sm:text-xl sm:leading-9">
-            Every note is rated by students who used it. Every university
-            community is verified by college email. Find material worth your
-            time, study it together, and turn it into a plan.
-          </p>
+      <div
+        aria-hidden="true"
+        className="vault-ambient vault-ambient-one absolute -top-48 left-[12%] size-[34rem] rounded-full"
+      />
+      <div
+        aria-hidden="true"
+        className="vault-ambient vault-ambient-two absolute right-[-12rem] bottom-[-15rem] size-[42rem] rounded-full"
+      />
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link
-              href={launchHref}
-              className="btn btn-marigold pressable focus-ring cta-link"
-            >
-              Get launch updates
-              <ArrowRight aria-hidden="true" className="cta-arrow size-4" />
-            </Link>
-            <a
-              href="#trust"
-              className="btn btn-outline-ivory pressable focus-ring"
-            >
-              See how trust works
-            </a>
+      <div className="relative mx-auto max-w-[1320px]">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10">
+          <div className="relative z-10">
+            <p className="max-w-xl text-sm font-medium leading-6 text-[#c7ff72] sm:text-base">
+              A study platform for Indian college students
+            </p>
+            <h1 className="vault-display mt-6 w-full max-w-6xl text-[clamp(2.8rem,6.6vw,7.5rem)] leading-[0.87] tracking-[-0.075em] text-white">
+              <span className="lg:block">Notes you trust. </span>
+              <span className="text-white/55 lg:block">
+                Plans you follow.
+              </span>
+            </h1>
+            <p className="mt-8 max-w-2xl text-base leading-7 text-white/58 sm:text-lg sm:leading-8">
+              Discover rated notes, enter a verified university community,
+              study live with classmates, and turn useful material into a
+              personalized, source-linked roadmap.
+            </p>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/signup"
+                className="vault-button vault-button-acid vault-focus"
+              >
+                Create your account
+                <ArrowUpRight aria-hidden="true" className="size-4" />
+              </Link>
+              <a
+                href="#platform"
+                className="vault-button vault-button-ghost vault-focus"
+              >
+                Explore the platform
+                <ArrowDownRight aria-hidden="true" className="size-4" />
+              </a>
+            </div>
+
+            <p className="mt-7 text-xs leading-5 text-white/38 sm:text-sm">
+              Free to join. University access is not paywalled. No behavioral
+              tracking or noisy social feed.
+            </p>
           </div>
 
-          <p className="mt-8 text-[13.5px] text-[var(--ivory-faint)]">
-            Free to join. No behavioral tracking, no push spam, no feed.
-          </p>
-        </div>
-
-        <div className="hero-rise-delayed">
-          <HeroVignette />
+          <div className="relative lg:translate-x-8">
+            <HeroVignette />
+          </div>
         </div>
       </div>
     </section>
@@ -72,29 +85,28 @@ function Hero(): ReactElement {
 
 function Home(): ReactElement {
   return (
-    <>
+    <div className="vault-page bg-[#0b1022]">
       <a
         href="#main-content"
-        className="focus-ring pressable fixed top-3 left-3 z-[100] -translate-y-24 rounded-[8px] bg-[var(--ink)] px-4 py-2 text-sm font-bold text-white focus:translate-y-0"
+        className="vault-focus fixed top-3 left-3 z-[100] -translate-y-24 rounded-full bg-[#c7ff72] px-5 py-3 text-sm font-bold text-[#101528] focus:translate-y-0"
       >
         Skip to content
       </a>
       <SiteHeader />
 
-      <main id="main-content">
+      <main id="main-content" className="w-full max-w-full overflow-x-hidden">
         <Hero />
-        <TrustMechanicsSection />
-        <NotesSection />
-        <RoomsSection />
-        <RoadmapsSection />
-        <UniversitySection />
+        <CapabilityMarquee />
+        <FeatureBento />
+        <PlatformAccordion />
+        <StudyFlowSection />
+        <ProductPrinciples />
         <PlansSection />
-        <FaqSection />
         <FinalCta />
       </main>
 
       <SiteFooter />
-    </>
+    </div>
   );
 }
 

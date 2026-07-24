@@ -4,12 +4,10 @@ import { useState } from "react";
 import type { KeyboardEvent, ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpenText,
   Check,
   FileSearch,
   LockKeyhole,
@@ -21,8 +19,8 @@ import {
   X,
 } from "lucide-react";
 import { Controller, useForm, useFormState } from "react-hook-form";
+import { saveOnboardingProfile } from "@/app/onboarding/actions";
 import {
-  ONBOARDING_STORAGE_KEY,
   onboardingDataSchema,
   onboardingDefaultValues,
   primaryGoals,
@@ -60,7 +58,7 @@ const goalIcons = {
 } as const;
 
 const inputClassName =
-  "focus-ring focus-dark mt-2 h-12 w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--off-white)] px-4 text-[15px] text-[var(--ink)] outline-none transition-colors placeholder:text-[#667068] hover:border-[var(--green-ledger)] focus:border-[var(--green-deep)]";
+  "focus-ring focus-dark mt-2 h-12 w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--off-white)] px-4 text-[15px] text-[var(--ink)] outline-none transition-colors placeholder:text-[#6b5f62] hover:border-[var(--green-ledger)] focus:border-[var(--green-deep)]";
 
 type OnboardingStep = 0 | 1 | 2;
 
@@ -475,7 +473,7 @@ function FocusStep({
                 className="peer sr-only"
                 {...register("studyApproach")}
               />
-              <span className="flex items-start gap-3 rounded-[10px] border border-[var(--field-line)] px-4 py-3.5 transition-colors hover:border-[var(--green-ledger)] peer-checked:border-[var(--green-deep)] peer-checked:bg-[#edf3f0] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-[var(--green-deep)]">
+              <span className="flex items-start gap-3 rounded-[10px] border border-[var(--field-line)] px-4 py-3.5 transition-colors hover:border-[var(--green-ledger)] peer-checked:border-[var(--green-deep)] peer-checked:bg-[var(--crimson-wash)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-[var(--green-deep)]">
                 <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border border-[var(--border-strong)] bg-white peer-checked:border-[var(--green-deep)]">
                   <span className="size-2 rounded-full bg-[var(--green-deep)] opacity-0 group-has-[:checked]:opacity-100" />
                 </span>
@@ -497,57 +495,9 @@ function FocusStep({
   );
 }
 
-function CompletionState({ data }: { data: OnboardingData }): ReactElement {
-  const goal = primaryGoals.find((item) => item.value === data.primaryGoal);
-
-  return (
-    <div className="hero-rise mx-auto w-full max-w-xl text-center">
-      <div className="stamp stamp-green stamp-in mx-auto">Setup complete</div>
-      <h1 className="font-display mt-8 text-[clamp(2.4rem,7vw,3.5rem)] leading-[1.05] text-[var(--ink)]">
-        Your starting point is ready, {data.displayName}.
-      </h1>
-      <p className="mx-auto mt-5 max-w-md text-[16px] leading-7 text-[var(--ink-muted)]">
-        We’ll start with {goal?.label.toLocaleLowerCase()} for {data.subjects.slice(0, 2).join(" and ")}
-        {data.subjects.length > 2 ? `, plus ${data.subjects.length - 2} more` : ""}.
-      </p>
-
-      <div className="mt-8 rounded-[12px] border border-[var(--field-line)] bg-white text-left">
-        <div className="flex items-center gap-3 border-b border-[var(--field-line)] px-5 py-4">
-          <BookOpenText aria-hidden="true" className="size-5 text-[var(--green-ledger)]" />
-          <span className="text-sm font-semibold text-[var(--ink)]">Your study register</span>
-        </div>
-        <dl className="divide-y divide-[var(--field-line)] px-5">
-          <div className="flex items-start justify-between gap-5 py-4">
-            <dt className="text-sm text-[var(--ink-muted)]">University</dt>
-            <dd className="text-right text-sm font-semibold text-[var(--ink)]">{data.universityName}</dd>
-          </div>
-          <div className="flex items-start justify-between gap-5 py-4">
-            <dt className="text-sm text-[var(--ink-muted)]">Subjects</dt>
-            <dd className="max-w-[65%] text-right text-sm font-semibold text-[var(--ink)]">
-              {data.subjects.join(", ")}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <Link
-        href="/"
-        className="btn btn-green pressable focus-ring focus-dark cta-link mt-8 w-full sm:w-auto"
-      >
-        Continue to ClassVault
-        <ArrowRight aria-hidden="true" className="cta-arrow size-4" />
-      </Link>
-      <p className="mt-5 text-xs leading-5 text-[var(--ink-muted)]">
-        This preview keeps your setup on this device.
-      </p>
-    </div>
-  );
-}
-
 export function OnboardingFlow(): ReactElement {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(0);
-  const [completedData, setCompletedData] = useState<OnboardingData | null>(null);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const {
     control,
     formState: { isSubmitting },
@@ -576,44 +526,23 @@ export function OnboardingFlow(): ReactElement {
     scrollToPageTop();
   };
 
-  const skipSetup = (): void => {
-    window.localStorage.setItem(
-      ONBOARDING_STORAGE_KEY,
-      JSON.stringify({ version: 1, status: "skipped" }),
-    );
-    router.push("/");
+  const completeSetup = async (data: OnboardingData): Promise<void> => {
+    setSubmissionError(null);
+    const result = await saveOnboardingProfile(data);
+    if (!result.success) {
+      setSubmissionError(result.message);
+      scrollToPageTop();
+    }
   };
-
-  const completeSetup = (data: OnboardingData): void => {
-    const parsedData = onboardingDataSchema.parse(data);
-    window.localStorage.setItem(
-      ONBOARDING_STORAGE_KEY,
-      JSON.stringify({ version: 1, status: "completed", data: parsedData }),
-    );
-    setCompletedData(parsedData);
-    scrollToPageTop();
-  };
-
-  if (completedData) {
-    return (
-      <main className="grid min-h-screen place-items-center bg-[var(--off-white)] px-5 py-12 sm:px-8">
-        <CompletionState data={completedData} />
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-[var(--off-white)] lg:grid lg:grid-cols-[minmax(300px,0.78fr)_minmax(560px,1.22fr)]">
       <aside className="bg-[var(--green-deep)] text-[var(--ivory)] lg:min-h-screen">
         <div className="mx-auto flex max-w-xl items-center justify-between px-5 py-5 sm:px-8 lg:min-h-screen lg:max-w-md lg:flex-col lg:items-stretch lg:justify-start lg:px-10 lg:py-10 xl:px-14">
           <BrandMark />
-          <button
-            type="button"
-            onClick={skipSetup}
-            className="focus-ring pressable rounded-[8px] px-2 py-2 text-sm font-semibold text-[var(--ivory-muted)] hover:text-[var(--ivory)] lg:hidden"
-          >
-            Skip for now
-          </button>
+          <span className="text-xs font-semibold text-[var(--ivory-muted)] lg:hidden">
+            Secure setup
+          </span>
 
           <div className="mt-20 hidden lg:block">
             <p className="text-sm font-semibold text-[var(--marigold)]">About 2 minutes</p>
@@ -632,13 +561,9 @@ export function OnboardingFlow(): ReactElement {
 
           <div className="mt-auto hidden items-center justify-between border-t border-[var(--green-soft)] pt-6 lg:flex">
             <span className="text-xs text-[var(--ivory-faint)]">You can change this later.</span>
-            <button
-              type="button"
-              onClick={skipSetup}
-              className="focus-ring pressable rounded-[8px] px-2 py-2 text-sm font-semibold text-[var(--ivory-muted)] hover:text-[var(--ivory)]"
-            >
-              Skip for now
-            </button>
+            <span className="text-xs font-semibold text-[var(--ivory-muted)]">
+              Saved to your account
+            </span>
           </div>
         </div>
         <MobileProgress currentStep={currentStep} />
@@ -660,6 +585,15 @@ export function OnboardingFlow(): ReactElement {
                   ? "Your university determines which verified community you can join."
                   : "We’ll use this to prioritize useful material—not to build an attention feed."}
             </p>
+
+            {submissionError ? (
+              <p
+                role="alert"
+                className="mt-6 rounded-[10px] border border-[#9b2c22]/25 bg-[#9b2c22]/8 px-4 py-3 text-sm font-semibold text-[#9b2c22]"
+              >
+                {submissionError}
+              </p>
+            ) : null}
 
             <form onSubmit={handleSubmit(completeSetup)} className="mt-9" noValidate>
               {currentStep === 0 ? (

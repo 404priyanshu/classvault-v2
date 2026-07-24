@@ -51,6 +51,7 @@ Run the relevant verification commands after changes and before considering work
 
 - `app/` or `src/app/` — Route handlers / pages / layouts (keep thin; delegate to actions/services)
 - `components/` or `src/components/` — Reusable UI (named exports only; Server Components by default)
+- `public/assets/landing/` — Generated and art-directed landing-page media, served from `/assets/landing/`
 - `lib/` or `src/lib/` — Shared utilities, clients, helpers (single source of truth)
 - `actions/` or `src/actions/` — Server actions / mutations (preferred over API routes for mutations)
 - `services/` — Business logic layer (when present)
@@ -74,6 +75,8 @@ Follow these strictly (add/remove to match your actual codebase):
 - Comments explain _why_ (business rules, tradeoffs, non-obvious decisions). Never comment the obvious.
 - Type safety first: explicit return types on public functions, proper error types.
 - Styling: Tailwind utility classes. No inline styles except rare dynamic cases. No CSS modules unless legacy.
+- Icons: Use Phosphor Icons (`@phosphor-icons/react`) for all new or modified UI. Do not introduce new icons from other libraries; migrate touched icons to Phosphor when practical.
+- Landing-page assets: Store generated images and other display media in `public/assets/landing/`, reference them with `/assets/landing/...`, and use descriptive kebab-case filenames. Prefer local, art-directed assets over remote stock-image URLs.
 - Imports: Use path aliases (`@/`) consistently. Group: external → internal → relative.
 
 **Good example pattern** (adapt to your stack):

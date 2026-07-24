@@ -1,123 +1,109 @@
+"use client";
+
 import type { ReactElement } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, Mail, Plus } from "lucide-react";
-import { faqs, planRows } from "@/app/landing-data";
-import { navItems } from "@/app/nav";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  FileText,
+  Route,
+  Timer,
+} from "lucide-react";
+import { planRows, productPrinciples } from "@/app/landing-data";
 
-const launchHref = "/coming-soon";
+const principleIcons = [FileText, Timer, Route] as const;
 
-/* ————— Plans ————— */
+export function ProductPrinciples(): ReactElement {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const principle = productPrinciples[activeIndex];
 
-function PlanCard({
-  name,
-  price,
-  summary,
-  green = false,
-}: {
-  name: "Free" | "Pro";
-  price: string;
-  summary: string;
-  green?: boolean;
-}): ReactElement {
+  function movePrinciple(direction: -1 | 1): void {
+    setActiveIndex((current) => {
+      const next = current + direction;
+      if (next < 0) return productPrinciples.length - 1;
+      if (next >= productPrinciples.length) return 0;
+      return next;
+    });
+  }
+
   return (
-    <article
-      className={`relative flex h-full flex-col px-6 pt-9 pb-7 sm:px-8 ${
-        green ? "card-green on-green" : "card"
-      }`}
-    >
-      <span
-        className={`index-tab left-6 ${green ? "index-tab-marigold" : ""}`}
-      >
-        {green ? "After launch" : "At launch"}
-      </span>
+    <section className="vault-section bg-[#f5f3ee] px-5 py-32 sm:px-8 md:py-44">
+      <div className="mx-auto max-w-[1320px]">
+        <div className="grid gap-12 rounded-[2rem] border border-[#101528]/10 bg-white p-6 shadow-[0_35px_100px_-65px_rgba(16,21,40,0.5)] sm:p-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20 lg:p-16">
+          <div className="flex flex-col justify-between gap-12">
+            <div>
+              <p className="text-xs font-bold tracking-[0.14em] text-[#6254e7] uppercase">
+                The bar we are building against
+              </p>
+              <h2 className="vault-display mt-5 max-w-lg text-[clamp(2.7rem,5vw,5.5rem)] leading-[0.94] tracking-[-0.06em] text-[#101528]">
+                Product choices, stated plainly.
+              </h2>
+              <p className="mt-6 max-w-md text-sm leading-6 text-[#717789] sm:text-base sm:leading-7">
+                These are pre-launch product principles, not testimonials or
+                traction claims.
+              </p>
+            </div>
 
-      <div className="flex items-baseline justify-between gap-4">
-        <h3
-          className={`font-display text-4xl ${
-            green ? "text-[var(--ivory)]" : "text-[var(--ink)]"
-          }`}
-        >
-          {name}
-        </h3>
-        <p
-          className={`text-[13.5px] font-semibold ${
-            green ? "text-[var(--marigold)]" : "text-[var(--ink-muted)]"
-          }`}
-        >
-          {price}
-        </p>
-      </div>
+            <div className="flex items-center gap-3" aria-hidden="true">
+              {principleIcons.map((Icon, index) => (
+                <span
+                  key={index}
+                  className={`grid size-12 place-items-center rounded-full border-4 border-white transition-transform duration-500 ${
+                    index === activeIndex
+                      ? "z-10 scale-110 bg-[#6254e7] text-white"
+                      : "-ml-5 bg-[#ece9e1] text-[#717789] first:ml-0"
+                  }`}
+                >
+                  <Icon className="size-4.5" />
+                </span>
+              ))}
+            </div>
+          </div>
 
-      <p
-        className={`mt-4 text-[15px] leading-7 ${
-          green ? "text-[var(--ivory-muted)]" : "text-[var(--ink-muted)]"
-        }`}
-      >
-        {summary}
-      </p>
+          <div className="flex min-h-[420px] flex-col justify-between rounded-[1.6rem] bg-[#101528] p-6 text-white sm:p-10">
+            <div aria-live="polite" aria-atomic="true">
+              <p className="text-xs font-bold tracking-[0.13em] text-[#c7ff72] uppercase">
+                {principle.marker}
+              </p>
+              <blockquote className="vault-display mt-7 text-[clamp(2.2rem,4vw,4.4rem)] leading-[1.02] tracking-[-0.05em]">
+                “{principle.quote}”
+              </blockquote>
+              <p className="mt-8 max-w-2xl text-base leading-7 text-white/58 sm:text-lg sm:leading-8">
+                {principle.detail}
+              </p>
+            </div>
 
-      <ul
-        className={`mt-7 border-t ${
-          green ? "border-[var(--green-soft)]" : "border-[var(--field-line)]"
-        }`}
-      >
-        {planRows.map((row, index) => {
-          const value = green ? row.pro : row.free;
-          return (
-            <li
-              key={row.feature}
-              className={`flex items-start gap-3 py-4 ${
-                index < planRows.length - 1
-                  ? green
-                    ? "border-b border-[var(--green-soft)]"
-                    : "border-b border-[var(--field-line)]"
-                  : ""
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className={`mt-1 grid size-4.5 shrink-0 place-items-center rounded-full ${
-                  green
-                    ? "bg-[var(--marigold)] text-[var(--ink)]"
-                    : "bg-[var(--green-deep)] text-[var(--marigold)]"
-                }`}
-              >
-                <Check className="size-2.5" strokeWidth={3.5} />
+            <div className="mt-12 flex items-center justify-between gap-6 border-t border-white/10 pt-6">
+              <span className="font-mono text-xs text-white/40">
+                {String(activeIndex + 1).padStart(2, "0")} / {" "}
+                {String(productPrinciples.length).padStart(2, "0")}
               </span>
-              <div>
-                <p
-                  className={`text-[14.5px] font-bold ${
-                    green ? "text-[var(--ivory)]" : "text-[var(--ink)]"
-                  }`}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  aria-label="Previous product principle"
+                  className="vault-focus grid size-11 place-items-center rounded-full border border-white/15 text-white transition-colors hover:bg-white hover:text-[#101528]"
+                  onClick={() => movePrinciple(-1)}
                 >
-                  {row.feature}
-                </p>
-                <p
-                  className={`mt-0.5 text-[13px] ${
-                    green
-                      ? "text-[var(--ivory-muted)]"
-                      : "text-[var(--ink-muted)]"
-                  }`}
+                  <ArrowLeft aria-hidden="true" className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next product principle"
+                  className="vault-focus grid size-11 place-items-center rounded-full bg-[#c7ff72] text-[#101528] transition-transform hover:scale-105"
+                  onClick={() => movePrinciple(1)}
                 >
-                  {value}
-                </p>
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                </button>
               </div>
-            </li>
-          );
-        })}
-      </ul>
-
-      <Link
-        href={launchHref}
-        className={`btn pressable focus-ring cta-link mt-7 ${
-          green ? "btn-marigold" : "btn-green"
-        }`}
-      >
-        Get launch updates
-        <ArrowUpRight aria-hidden="true" className="cta-arrow cta-arrow-up size-4" />
-      </Link>
-    </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -125,190 +111,119 @@ export function PlansSection(): ReactElement {
   return (
     <section
       id="plans"
-      className="on-light border-b border-[var(--field-line)] bg-[var(--off-white)] py-20 sm:py-24 lg:py-32"
+      className="vault-section bg-white px-5 py-32 sm:px-8 md:py-44"
     >
-      <div className="page-shell">
-        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <h2 className="font-display max-w-2xl text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.08] text-[var(--ink)]">
-              University access is never the paid part.
-            </h2>
-            <p className="prose-measure mt-6 text-lg leading-8 text-[var(--ink-body)]">
-              The free tier is the real product: find notes, verify your
-              university, study live, build a starter roadmap. Pro raises
-              limits for the students who hit them.
-            </p>
-          </div>
-          <p className="max-w-xs text-[14px] leading-6 text-[var(--ink-muted)] lg:text-right">
-            Exact pricing and plan limits will be published before launch —
-            not before they&apos;re real.
-          </p>
-        </div>
-
-        <div data-reveal className="mt-16 grid gap-8 sm:gap-6 lg:grid-cols-2">
-          <PlanCard
-            name="Free"
-            price="₹0, always"
-            summary="Everything a student needs to find trusted material and study with classmates."
-          />
-          <PlanCard
-            name="Pro"
-            price="Priced at launch"
-            summary="More storage, unlimited roadmap generations, longer rooms with host controls."
-            green
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ————— FAQ ————— */
-
-export function FaqSection(): ReactElement {
-  return (
-    <section id="faq" className="on-light bg-white py-20 sm:py-24 lg:py-32">
-      <div className="page-shell grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <h2 className="font-display text-[clamp(2.1rem,4.5vw,3.4rem)] leading-[1.08] text-[var(--ink)]">
-            Before you join.
+      <div className="mx-auto max-w-[1320px]">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <h2 className="vault-display max-w-4xl text-[clamp(3rem,6vw,6.7rem)] leading-[0.92] tracking-[-0.065em] text-[#101528]">
+            University access is never the upgrade.
           </h2>
-          <p className="prose-measure mt-6 text-lg leading-8 text-[var(--ink-body)]">
-            The short version of how access, downloads, and plans will work.
+          <p className="max-w-xl text-base leading-7 text-[#5e6474] lg:justify-self-end lg:text-lg lg:leading-8">
+            Free students can still browse, download, rate, and join their
+            verified university community. Pro expands creation limits and
+            advanced study tools.
           </p>
-          <a
-            href="mailto:hello@classvault.in"
-            className="cta-link pressable focus-ring mt-8 inline-flex items-center gap-2 text-[15px] font-bold text-[var(--green-deep)]"
-          >
-            Ask something else
-            <Mail aria-hidden="true" className="size-4" />
-          </a>
         </div>
 
-        <div data-reveal className="border-t border-[var(--border-strong)]">
-          {faqs.map((faq) => (
-            <details
-              key={faq.question}
-              name="landing-faq"
-              className="faq-item border-b border-[var(--field-line)]"
+        <div className="mt-16 overflow-hidden rounded-[2rem] border border-[#101528]/10">
+          <div className="grid grid-cols-[1.15fr_0.85fr_0.85fr] bg-[#101528] px-4 py-5 text-white sm:px-7">
+            <span className="text-sm font-semibold">What is included</span>
+            <span className="text-sm font-semibold">Free</span>
+            <span className="text-sm font-semibold text-[#c7ff72]">Pro</span>
+          </div>
+          {planRows.map((row) => (
+            <div
+              key={row.feature}
+              className="grid grid-cols-1 gap-4 border-b border-[#101528]/8 px-4 py-6 last:border-b-0 sm:grid-cols-[1.15fr_0.85fr_0.85fr] sm:gap-6 sm:px-7"
             >
-              <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left sm:py-7">
-                <span className="font-display text-lg leading-snug text-[var(--ink)] sm:text-xl">
-                  {faq.question}
-                </span>
-                <span className="faq-icon grid size-8 shrink-0 place-items-center rounded-full border border-[var(--border-strong)] text-[var(--ink)]">
-                  <Plus aria-hidden="true" className="size-4" />
-                </span>
-              </summary>
-              <div className="faq-answer pb-7">
-                <p className="prose-measure text-[15px] leading-7 text-[var(--ink-muted)]">
-                  {faq.answer}
-                </p>
-              </div>
-            </details>
+              <p className="text-sm font-bold text-[#101528] sm:text-base">
+                {row.feature}
+              </p>
+              <p className="flex gap-2 text-sm leading-6 text-[#5e6474]">
+                <Check
+                  aria-hidden="true"
+                  className="mt-1 size-3.5 shrink-0 text-[#6254e7]"
+                />
+                {row.free}
+              </p>
+              <p className="flex gap-2 text-sm leading-6 text-[#101528]">
+                <Check
+                  aria-hidden="true"
+                  className="mt-1 size-3.5 shrink-0 text-[#6254e7]"
+                />
+                {row.pro}
+              </p>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-/* ————— Final CTA ————— */
 
 export function FinalCta(): ReactElement {
   return (
-    <section className="on-green ledger-lines-green bg-[var(--green-deep)] py-24 text-[var(--ivory)] sm:py-28 lg:py-32">
-      <div data-reveal className="page-shell text-center">
-        <div className="stamp stamp-marigold mx-auto bg-[var(--green-deep)]">
-          Opening soon
-        </div>
-        <h2 className="font-display mx-auto mt-8 max-w-3xl text-[clamp(2.6rem,6.5vw,4.5rem)] leading-[1.05] text-[var(--ivory)]">
-          Be on the register when ClassVault opens.
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-[var(--ivory-muted)]">
-          We&apos;re finishing the study workflow end to end. Waitlisted
-          students hear first — and joining costs nothing.
+    <section className="overflow-hidden bg-[#c7ff72] px-5 py-28 sm:px-8 md:py-40">
+      <div className="relative mx-auto max-w-[1320px] text-center">
+        <div
+          aria-hidden="true"
+          className="vault-cta-orbit absolute top-1/2 left-1/2 size-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#101528]/10"
+        />
+        <p className="relative text-xs font-black tracking-[0.15em] text-[#6254e7] uppercase">
+          ClassVault is pre-launch
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link
-            href={launchHref}
-            className="btn btn-marigold pressable focus-ring cta-link w-full sm:w-auto"
-          >
-            Get launch updates
-            <ArrowRight aria-hidden="true" className="cta-arrow size-4" />
-          </Link>
-          <a
-            href="mailto:hello@classvault.in"
-            className="btn btn-outline-ivory pressable focus-ring w-full sm:w-auto"
-          >
-            Contact the team
-          </a>
-        </div>
+        <h2 className="vault-display relative mx-auto mt-6 max-w-6xl text-[clamp(3.4rem,8vw,9rem)] leading-[0.86] tracking-[-0.075em] text-[#101528]">
+          Be there when the vault opens.
+        </h2>
+        <p className="relative mx-auto mt-8 max-w-2xl text-base leading-7 text-[#3e4454] sm:text-lg sm:leading-8">
+          Join the waitlist for launch updates. Tell us your university so we
+          can prioritize the communities students need first.
+        </p>
+        <Link
+          href="/coming-soon"
+          className="vault-button vault-button-dark vault-focus relative mt-10 inline-flex"
+        >
+          Join the waitlist
+          <ArrowUpRight aria-hidden="true" className="size-4" />
+        </Link>
       </div>
     </section>
   );
 }
 
-/* ————— Footer ————— */
-
 export function SiteFooter(): ReactElement {
   return (
-    <footer className="border-t border-[var(--green-soft)] bg-[var(--green-deep)] text-[var(--ivory)]">
-      <div className="page-shell grid gap-10 py-14 sm:grid-cols-[1fr_auto] sm:items-start">
+    <footer className="bg-[#0b1022] px-5 py-10 text-white sm:px-8">
+      <div className="mx-auto flex max-w-[1320px] flex-col gap-8 border-t border-white/10 pt-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <a
-            className="focus-ring inline-flex items-center gap-3"
             href="#top"
-            aria-label="ClassVault home"
+            className="vault-focus inline-flex items-center gap-2.5 rounded-full"
           >
-            <span className="relative size-8 overflow-hidden rounded-[7px] bg-white">
-              <Image
-                src="/icon.svg"
-                alt=""
-                fill
-                sizes="32px"
-                className="object-contain p-1"
-              />
+            <span className="vault-logo-mark grid size-8 place-items-center rounded-full text-sm font-black">
+              C
             </span>
-            <span className="font-display text-xl">ClassVault</span>
+            <span className="font-semibold">ClassVault</span>
           </a>
-          <p className="mt-5 max-w-md text-[14.5px] leading-7 text-[var(--ivory-muted)]">
-            Rated notes, verified universities, focused rooms, and a plan you
-            can finish. Built for Indian college students.
+          <p className="mt-4 max-w-md text-sm leading-6 text-white/45">
+            Trusted notes, verified communities, focused rooms, and personal
+            study roadmaps for Indian college students.
           </p>
         </div>
 
-        <nav
-          aria-label="Footer"
-          className="grid grid-cols-2 gap-x-12 gap-y-3 text-[14px] text-[var(--ivory-muted)] sm:text-right"
-        >
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="footer-link focus-ring hover:text-[var(--ivory)]"
-            >
-              {item.label}
-            </a>
-          ))}
-          <a
-            href="#faq"
-            className="footer-link focus-ring hover:text-[var(--ivory)]"
-          >
-            FAQ
+        <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/55">
+          <a className="vault-footer-link vault-focus" href="#platform">
+            Platform
           </a>
-          <a
-            href="mailto:hello@classvault.in"
-            className="footer-link focus-ring hover:text-[var(--ivory)]"
-          >
-            Contact
+          <a className="vault-footer-link vault-focus" href="#study-flow">
+            Study flow
           </a>
-        </nav>
-      </div>
-      <div className="border-t border-[var(--green-soft)]">
-        <div className="page-shell flex flex-col gap-2 py-5 text-[12px] text-[var(--ivory-faint)] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} ClassVault</p>
-          <p>No behavioral tracking. No engagement bait.</p>
+          <a className="vault-footer-link vault-focus" href="#plans">
+            Plans
+          </a>
+          <Link className="vault-footer-link vault-focus" href="/coming-soon">
+            Waitlist
+          </Link>
         </div>
       </div>
     </footer>

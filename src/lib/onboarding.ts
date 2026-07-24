@@ -94,5 +94,3 @@ export const onboardingDefaultValues: OnboardingData = {
   primaryGoal: "find-notes",
   studyApproach: "balanced",
 };
-
-export const ONBOARDING_STORAGE_KEY = "classvault:onboarding:v1";
