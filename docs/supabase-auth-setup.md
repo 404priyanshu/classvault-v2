@@ -28,15 +28,30 @@ Use the production origin for `NEXT_PUBLIC_SITE_URL` in production, without a tr
 6. In Google Cloud, add Supabase’s callback URL as an authorized redirect URI:
    - `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`
 
+## Profile migration
+
+The authenticated onboarding and dashboard flows require the `public.profiles` table. Apply [the profile migration](../supabase/migrations/20260724000000_create_profiles.sql) before testing them.
+
+For a project without the Supabase CLI:
+
+1. Open **Supabase Dashboard → SQL Editor**.
+2. Create a new query.
+3. Paste the complete migration file.
+4. Run it once and confirm `public.profiles` appears in **Table Editor**.
+
+If the project is linked to the Supabase CLI, run `supabase db push` instead.
+
+The migration grants authenticated students only `select`, `insert`, and `update`. RLS policies restrict each operation to the row whose `user_id` matches `auth.uid()`; students cannot list or delete other profiles.
+
 ## Application routes
 
 - `/signup` — Google or email/password account creation
 - `/login` — Google or email/password sign-in
 - `/auth/callback` — OAuth and email-confirmation code exchange
-- `/onboarding` — authenticated students only
-- `/dashboard` — authenticated students only
+- `/onboarding` — authenticated students without a completed profile
+- `/dashboard` — authenticated students with a completed profile
 
-After email signup, students are asked to confirm their inbox. Google signup and projects with email confirmation disabled continue directly to onboarding.
+After email signup, students are asked to confirm their inbox. Google signup and projects with email confirmation disabled continue directly to onboarding. Returning students with completed profiles are sent to the dashboard.
 
 ## Database safety
 
@@ -50,3 +65,5 @@ Authentication does not automatically protect application tables. Enable Row Lev
 4. Visit `/dashboard` while signed out and confirm the app redirects to `/login?next=%2Fdashboard`.
 5. Sign out from the dashboard account menu.
 6. Confirm signed-in students visiting `/login` or `/signup` are redirected to `/dashboard`.
+7. Complete onboarding, then confirm the profile appears in `public.profiles` and the dashboard shows the saved name, university, subjects, and account email.
+8. Sign in from a second browser and confirm the saved profile is loaded without repeating onboarding.
